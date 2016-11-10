@@ -1,0 +1,6 @@
+**/*.min.js
+**/bundle.js
+coverage/**
+node_modules/**
+vendor/**
+
