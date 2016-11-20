@@ -1,3 +1,11 @@
+# api stream
+
+Model an async function call with a pull stream. This is a transform stream that takes arrays and emits streams. Each returned stream emits a start event and a response event.
+
+
+## example
+
+```js
 var S = require('pull-stream')
 var flatMerge = require('pull-flat-merge')
 var test = require('tape')
@@ -66,3 +74,4 @@ test('pass arguments', function (t) {
         })
     )
 })
+```

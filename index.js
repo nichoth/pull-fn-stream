@@ -8,24 +8,31 @@ var cat = require('pull-cat')
 //  { type: key, resp: apiResponse }
 module.exports = function (fnMap) {
     return S(
-        S.map(function (key) {
-            var startEv = { type: 'start', op: key }
+        S.map(function (args) {
+            var _args = [].concat(args)
+            var key = args[0]
+            var startEv = { type: 'start', op: key, args: _args.slice(1) }
             return startEv
         }),
 
         S.map(function (startEv) {
             return cat([
-                S.once(startEv),
+                S.once({
+                    type: 'start',
+                    op: startEv.op
+                }),
                 S(
                     S.once(startEv),
                     S.asyncMap(function (ev, cb) {
-                        fnMap[ev.op](function (err, resp) {
-                            if (err) return cb(err)
-                            cb(null, {
-                                type: ev.op,
-                                resp: resp
+                        fnMap[ev.op].apply(null, ev.args.concat(
+                            function (err, resp) {
+                                if (err) return cb(err)
+                                cb(null, {
+                                    type: ev.op,
+                                    resp: resp
+                                })
                             })
-                        })
+                        )
                     })
                 )
             ])
