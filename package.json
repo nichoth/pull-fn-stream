@@ -1,7 +1,7 @@
 {
-  "name": "api-stream",
+  "name": "pull-fn-stream",
   "version": "0.0.0",
-  "description": "Streams from async functions",
+  "description": "Create a pull stream from an async function call",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -30,5 +30,12 @@
   "bugs": {
     "url": "https://github.com/nichoth/api-stream/issues"
   },
-  "homepage": "https://github.com/nichoth/api-stream#readme"
+  "homepage": "https://github.com/nichoth/api-stream#readme",
+  "keywords": [
+    "pull-stream",
+    "pull",
+    "stream",
+    "async",
+    "function"
+  ]
 }
