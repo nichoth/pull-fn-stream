@@ -2,6 +2,9 @@
 
 Model an async function call with a pull stream. This is a transform stream that takes arrays and emits streams. Each returned stream emits a start event and a response event.
 
+## install
+    
+    $ npm install pull-fn-stream
 
 ## example
 
