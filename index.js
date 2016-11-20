@@ -1,4 +1,7 @@
-var S = require('pull-stream')
+var S = require('pull-stream/pull')
+S.map = require('pull-stream/throughs/map')
+S.once = require('pull-stream/sources/once')
+S.asyncMap = require('pull-stream/throughs/async-map')
 var cat = require('pull-cat')
 
 // take a map from names to fns

@@ -7,6 +7,8 @@
     "test": "test"
   },
   "scripts": {
+    "preversion": "npm test",
+    "postversion": "git push && git push --tags && npm publish",
     "test": "node test/index.js | tap-spec"
   },
   "dependencies": {
