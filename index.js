@@ -13,13 +13,13 @@ module.exports = function (fnMap) {
     return S(
         S.map(function (args) {
             var _args = [].concat(args)
-            var key = args[0]
+            var key = _args[0]
             var startEv = { type: 'start', op: key, args: _args.slice(1) }
             return startEv
         }),
 
         S.map(function (startEv) {
-            return cat([
+            var requestStream = cat([
                 S.once({
                     type: 'start',
                     op: startEv.op
@@ -39,6 +39,7 @@ module.exports = function (fnMap) {
                     })
                 )
             ])
+            return requestStream
         })
     )
 }

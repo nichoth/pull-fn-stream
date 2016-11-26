@@ -13,8 +13,25 @@ var fns = {
         setTimeout(function () {
             cb(null, 'b')
         }, 100)
+    },
+    error: function (cb) {
+        setTimeout(function () {
+            cb(new Error('test error'))
+        }, 0)
     }
 }
+
+test('error', function (t) {
+    t.plan(1)
+    S(
+        S.values(['error']),
+        toStreams(fns),
+        flatMerge(),
+        S.collect(function (err, res) {
+            t.equal(err.message, 'test error', 'should pass error in stream')
+        })
+    )
+})
 
 test('call async functions', function (t) {
     t.plan(1)
@@ -24,7 +41,6 @@ test('call async functions', function (t) {
         { type: 'a', resp: 'a' },
         { type: 'b', resp: 'b' }
     ]
-
     S(
         S.values(['b', 'a']),
         toStreams(fns),
