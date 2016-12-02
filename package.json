@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "pull-cat": "^1.1.11",
+    "pull-flat-merge": "0.0.1",
     "pull-stream": "^3.4.5"
   },
   "devDependencies": {

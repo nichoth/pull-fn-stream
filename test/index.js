@@ -1,7 +1,7 @@
 var S = require('pull-stream')
 var flatMerge = require('pull-flat-merge')
 var test = require('tape')
-var toStreams = require('../')
+var toStream = require('../')
 
 var fns = {
     a: function (cb) {
@@ -21,19 +21,50 @@ var fns = {
     }
 }
 
-test('error', function (t) {
-    t.plan(1)
+function asyncOk (arg, cb) {
+    process.nextTick(function () {
+        cb(null, arg)
+    })
+}
+
+function asyncErr (msg, cb) {
+    process.nextTick(function () {
+        cb(new Error(msg))
+    })
+}
+
+test('call async function', function (t) {
+    t.plan(2)
+    var stream = toStream(asyncOk, 'key')
+    var expected = [
+        { type: 'start', op: 'key' },
+        { type: 'key', resp: 'arg' }
+    ]
     S(
-        S.values(['error']),
-        toStreams(fns),
+        S.once('arg'),
+        stream,
         flatMerge(),
         S.collect(function (err, res) {
-            t.equal(err.message, 'test error', 'should pass error in stream')
+            t.error(err)
+            t.deepEqual(res, expected, 'should emit events')
         })
     )
 })
 
-test('call async functions', function (t) {
+test('async error', function (t) {
+    t.plan(1)
+    var stream = toStream(asyncErr, 'key')
+    S(
+        S.once('test msg'),
+        stream,
+        flatMerge(),
+        S.collect(function (err, res) {
+            t.equal(err.message, 'test msg', 'should end with error')
+        })
+    )
+})
+
+test('from object', function (t) {
     t.plan(1)
     var expected = [
         { type: 'start', op: 'b' },
@@ -43,7 +74,7 @@ test('call async functions', function (t) {
     ]
     S(
         S.values(['b', 'a']),
-        toStreams(fns),
+        toStream.fromObject(fns),
         flatMerge(),
         S.collect(function (err, evs) {
             t.deepEqual(evs, expected, 'should emit events in order')
@@ -75,10 +106,22 @@ test('pass arguments', function (t) {
     t.plan(1)
     S(
         S.values([ ['b',4], ['a',1,2,3] ]),
-        toStreams(fns),
+        toStream.fromObject(fns),
         flatMerge(),
         S.collect(function (err, evs) {
             t.deepEqual(evs, expected, 'should pass args in array')
+        })
+    )
+})
+
+test('error from object', function (t) {
+    t.plan(1)
+    S(
+        S.values(['error']),
+        toStream.fromObject(fns),
+        flatMerge(),
+        S.collect(function (err, res) {
+            t.equal(err.message, 'test error', 'should pass error in stream')
         })
     )
 })
