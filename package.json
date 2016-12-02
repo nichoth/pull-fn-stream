@@ -1,6 +1,6 @@
 {
   "name": "pull-fn-stream",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "Create a pull stream from an async function call",
   "main": "index.js",
   "directories": {
