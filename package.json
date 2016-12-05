@@ -13,12 +13,11 @@
   },
   "dependencies": {
     "pull-cat": "^1.1.11",
-    "pull-flat-merge": "0.0.1",
+    "pull-flat-merge": "^1.0.0",
     "pull-stream": "^3.4.5"
   },
   "devDependencies": {
     "eslint-config-minlint": "^1.0.2",
-    "pull-flat-merge": "0.0.1",
     "tap-spec": "^4.1.1",
     "tape": "^4.6.2"
   },
