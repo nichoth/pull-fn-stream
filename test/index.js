@@ -38,14 +38,16 @@ test('call async function', function (t) {
     var stream = toStream(asyncOk, 'key')
     var expected = [
         { type: 'start', op: 'key' },
-        { type: 'key', resp: 'arg' }
+        { type: 'start', op: 'key' },
+        { type: 'key', resp: 'arg' },
+        { type: 'key', resp: 'arg2' }
     ]
     S(
-        S.once('arg'),
-        stream,
+        S.values(['arg', 'arg2']),
+        stream(),
         flatMerge(),
         S.collect(function (err, res) {
-            t.error(err)
+            t.error(err, 'error')
             t.deepEqual(res, expected, 'should emit events')
         })
     )
@@ -56,7 +58,7 @@ test('async error', function (t) {
     var stream = toStream(asyncErr, 'key')
     S(
         S.once('test msg'),
-        stream,
+        stream(),
         flatMerge(),
         S.collect(function (err, res) {
             t.equal(err.message, 'test msg', 'should end with error')
@@ -65,18 +67,21 @@ test('async error', function (t) {
 })
 
 test('from object', function (t) {
-    t.plan(1)
+    t.plan(2)
     var expected = [
         { type: 'start', op: 'b' },
         { type: 'start', op: 'a' },
+        { type: 'start', op: 'b' },
         { type: 'a', resp: 'a' },
+        { type: 'b', resp: 'b' },
         { type: 'b', resp: 'b' }
     ]
     S(
-        S.values(['b', 'a']),
-        toStream.fromObject(fns),
+        S.values(['b', 'a', 'b']),
+        toStream.fromObject(fns)(),
         flatMerge(),
         S.collect(function (err, evs) {
+            t.error(err, 'error')
             t.deepEqual(evs, expected, 'should emit events in order')
         })
     )
@@ -106,7 +111,7 @@ test('pass arguments', function (t) {
     t.plan(1)
     S(
         S.values([ ['b',4], ['a',1,2,3] ]),
-        toStream.fromObject(fns),
+        toStream.fromObject(fns)(),
         flatMerge(),
         S.collect(function (err, evs) {
             t.deepEqual(evs, expected, 'should pass args in array')
@@ -118,7 +123,7 @@ test('error from object', function (t) {
     t.plan(1)
     S(
         S.values(['error']),
-        toStream.fromObject(fns),
+        toStream.fromObject(fns)(),
         flatMerge(),
         S.collect(function (err, res) {
             t.equal(err.message, 'test error', 'should pass error in stream')
